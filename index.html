@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>XSV Trading</title>
+<link rel="icon" href="favicon.ico" type="image/ico">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
@@ -19,15 +20,13 @@ body{
 
 #chartCanvas{
   position:fixed;
-  top:120px; /* start below header */
+  top:120px;
   left:0;
   width:100%;
-  height:calc(100vh - 120px); /* full viewport minus header initially */
+  height:calc(100vh - 120px);
   z-index:-1;
   opacity:0.2;
 }
-
-
 
 /* ===== Header ===== */
 header{
@@ -50,22 +49,19 @@ header{
   letter-spacing:10px;
   text-align:center;
 
-  /* Strong metallic gradient */
   background: linear-gradient(
     120deg,
     #ffffff 0%,
-    #888888 15%,   /* darker streak */
+    #888888 15%,
     #ffffff 30%,
-    #bbbbbb 50%,   /* medium gray */
+    #bbbbbb 50%,
     #ffffff 70%,
-    #999999 85%,   /* another dark streak */
+    #999999 85%,
     #ffffff 100%
   );
   background-size:300% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
-  /* Animate gradient across text */
   animation: metallicGlint 1.5s linear infinite;
 
   text-shadow: 0 0 12px rgba(255,255,255,0.6),
@@ -96,6 +92,22 @@ header{
   font-weight:500;
   letter-spacing:-1px;
   word-break:break-word;
+  background: linear-gradient(
+    120deg,
+    #ffffff 0%,
+    #bbbbbb 30%,
+    #ffffff 60%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: heroShimmer 3s linear infinite;
+}
+
+@keyframes heroShimmer{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
 }
 
 .hero p{
@@ -104,7 +116,7 @@ header{
   color:#888;
 }
 
-/* ===== Request Access Button - Metallic ===== */
+/* ===== Request Access Button - Metallic (fixed hover) ===== */
 .btn{
   display:inline-block;
   margin-top:40px;
@@ -114,10 +126,8 @@ header{
   letter-spacing:2px;
   text-transform:uppercase;
   cursor:pointer;
-  text-decoration:none;
   text-align:center;
 
-  /* Metallic gradient background */
   background: linear-gradient(
     120deg,
     #ffffff 0%,
@@ -134,11 +144,24 @@ header{
   font-weight:700;
   border-radius:6px;
   box-shadow:0 0 15px rgba(120,200,255,0.3);
-  transition:all 0.4s ease;
+  transition: all 0.4s ease;
   animation: btnGlint 2s linear infinite;
 }
 
+/* Hover fix: keep metallic gradient, remove gray fill */
 .btn:hover{
+  background: linear-gradient(
+    120deg,
+    #ffffff 0%,
+    #888888 20%,
+    #ffffff 40%,
+    #bbbbbb 60%,
+    #ffffff 80%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
   box-shadow:0 0 30px rgba(120,200,255,0.8);
   transform:scale(1.05);
 }
@@ -186,7 +209,7 @@ section#features{
   backdrop-filter:blur(6px);
   transition:0.4s;
 }
-.testimonial:hover{ border:1px solid rgba(120,200,255,0.4); }
+.testimonial:hover{ border:1px solid rgba(120,200,255,0.4); transform: translateY(-6px);}
 .testimonial h4{ font-size:14px; letter-spacing:1px; margin-bottom:6px; }
 .stars{ color:#87f981; font-size:14px; margin-bottom:10px; }
 .testimonial p{ font-size:14px; color:#aaa; }
@@ -202,8 +225,97 @@ footer{ padding:40px 8%; font-size:12px; color:#555; text-align:center; }
   .logo{ font-size:42px; letter-spacing:6px; }
 }
 
-/* Optional smaller metallic shimmer for hero text */
-.hero h1{
+/* ===== Sleek Access Modal with Glint Prices ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh; /* full viewport height */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* perfect vertical center */
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 100;
+}
+
+.modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-content {
+  position: relative;
+  background: #111;
+  padding: 40px 30px;
+  width: 90%;
+  max-width: 620px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+  transform: scale(0.95); /* small scale for pop animation */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.modal.active .modal-content {
+  transform: scale(1); /* pop to normal */
+}
+
+.modal h2 {
+  margin-bottom: 30px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+/* Plan Cards */
+.plans {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media(min-width: 600px){
+  .plans {
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+  }
+}
+
+.plan {
+  flex: 1;
+  padding: 28px 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  text-decoration: none;
+  color: #e5e5e5;
+  transition: all 0.3s ease;
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(4px);
+  position: relative;
+}
+
+.plan h3 {
+  margin-bottom: 6px;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+.plan p {
+  font-size: 14px;
+  color: #aaa;
+  margin: 4px 0;
+}
+
+/* Price Glint */
+.price {
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 1px;
   background: linear-gradient(
     120deg,
     #ffffff 0%,
@@ -213,12 +325,57 @@ footer{ padding:40px 8%; font-size:12px; color:#555; text-align:center; }
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: heroShimmer 3s linear infinite;
+  animation: priceGlint 3s linear infinite;
+  margin-bottom: 8px;
 }
-@keyframes heroShimmer{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
+
+@keyframes priceGlint {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Gradient hover effect */
+.plan:hover {
+  border: none;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(120,200,255,0.25);
+  background: linear-gradient(135deg, rgba(120,200,255,0.1), rgba(120,200,255,0.05));
+}
+
+/* Lifetime highlight */
+.lifetime {
+  background: rgba(120,200,255,0.05);
+  border: 1px solid rgba(120,200,255,0.25);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 1px 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(120,200,255,0.4);
+  color: rgba(120,200,255,0.9);
+  font-weight: 600;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+
+.close {
+  position: absolute;
+  top: 18px;
+  right: 25px;
+  font-size: 22px;
+  cursor: pointer;
+  color: #777;
+  transition: color 0.2s ease;
+}
+
+.close:hover {
+  color: #fff;
 }
 </style>
 </head>
@@ -232,8 +389,8 @@ footer{ padding:40px 8%; font-size:12px; color:#555; text-align:center; }
 
 <section class="hero fade-up">
   <h1>Trade with xlusive.<br />Profit with ease.</h1>
-  <p>XSV is a futures trading group focused on structure, risk control, psychology, and consistency.</p>
-  <a href="https://buy.stripe.com/8x214oeWK2gq4mGb2HbV601" class="btn">Gain Access</a>
+  <p>A futures trading group focused on structure, risk control, psychology, and consistency. Dedicated to pushing you to your first 6 firgures.</p>
+  <button class="btn" id="openModal">Gain Access</button>
 </section>
 
 <section id="features">
@@ -241,37 +398,67 @@ footer{ padding:40px 8%; font-size:12px; color:#555; text-align:center; }
   <div class="features">
     <div class="feature fade-up">
       <h3>Futures Focused</h3>
-      <p>Structured setups. Defined risk. Professional execution.</p>
+      <p> setups. Defined risk. Professional execution.</p>
     </div>
     <div class="feature fade-up">
       <h3>Private Membership</h3>
-      <p>A curated group of dedicated traders. Sharing different looks and views on the markets</p>
+      <p>A private group of dedicated traders. Sharing different views on the markets</p>
     </div>
     <div class="feature fade-up">
       <h3>Risk First</h3>
-      <p>Capital protection is the foundation to growth.</p>
+      <p>Strong capital protection is the foundation to see growth.</p>
     </div>
     <div class="feature fade-up">
       <h3>Psychology Focused</h3>
-      <p>Mentallity is the key to consistency and success.</p>
+      <p>Mentality is the key to consistency and success.</p>
     </div>
   </div>
 </section>
-  <div class="divider"></div>
+<div class="divider"></div>
 <section id="testimonials" class="testimonials">
   <div class="testimonial fade-up">
-    <h4>James R.</h4>
+    <h4>James G.</h4>
     <div class="stars">★★★★★</div>
-    <p>The structure and discipline inside XSV completely changed my view on trading.</p>
+    <p>The structure and community inside XSV completely changed my view on trading.</p>
   </div>
   <div class="testimonial fade-up">
     <h4>Louis B.</h4>
     <div class="stars">★★★★★</div>
-    <p>Best futures community I’ve been a part of. Clean setups and best advice.</p>
+    <p>Best futures community I’ve been a part of. Good tools and best advice.</p>
+  </div>
+  <div class="testimonial fade-up">
+    <h4>Nick C.</h4>
+    <div class="stars">★★★★★</div>
+    <p>was able to pass a funded and receieve my first ever payout less than 2 weeks in! money well spent!</p>
   </div>
 </section>
 
 <footer class="fade-up">© 2026 XSV Trading — xlusive.</footer>
+
+<!-- ===== Access Modal ===== -->
+<div id="accessModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Select Your Access</h2>
+
+    <div class="plans">
+      <!-- Monthly Plan -->
+      <a href="https://buy.stripe.com/3cI4gA29Y3kucTc1s7bV603" class="plan">
+        <h3>Monthly Access</h3>
+        <p class="price">$99.99 / month</p>
+        <p>Billed monthly. Cancel anytime. Full access to calls, bots, tools, and community.</p>
+      </a>
+
+      <!-- Lifetime Plan -->
+      <a href="https://buy.stripe.com/14A4gAdSGbR07yS6MrbV602" class="plan lifetime">
+        <div class="badge">Best Value</div>
+        <h3>Lifetime Access</h3>
+        <p class="price">$699 one-time</p>
+        <p>Full access forever plus exclusive tools, VIP perks, and live trading sessions.</p>
+      </a>
+    </div>
+  </div>
+</div>
 
 <script>
 /* Scroll Animation */
@@ -293,40 +480,33 @@ let candles = [];
 let basePrice;
 let tick = 0;
 
-// Resize canvas to hero section only
 function resize() {
   canvas.width = window.innerWidth;
-  canvas.height = heroSection.offsetHeight; // only behind hero
-  basePrice = canvas.height * 0.5; // start middle of hero section
+  canvas.height = heroSection.offsetHeight;
+  basePrice = canvas.height * 0.5;
 }
 resize();
 window.addEventListener("resize", resize);
 
-// Calculate max candles to always fill width
 function getMaxCandles() {
   return Math.ceil(canvas.width / (candleWidth + gap)) + 10;
 }
 
-// Add a new candle
 function addCandle() {
   const open = basePrice;
-  const change = (Math.random() - 0.48) * 50; // random movement
+  const change = (Math.random() - 0.48) * 50;
   const close = open + change;
   const high = Math.max(open, close) + Math.random() * 15;
   const low = Math.min(open, close) - Math.random() * 15;
   candles.push({ open, close, high, low });
   basePrice = close;
 
-  // Keep only enough candles to fill width
   const maxCandles = getMaxCandles();
   if (candles.length > maxCandles) candles.shift();
 }
 
-// Draw grid and candles
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Optional subtle horizontal grid
   ctx.strokeStyle = "rgba(255,255,255,0.04)";
   ctx.lineWidth = 1;
   for (let i = 0; i < canvas.height; i += 120) {
@@ -336,9 +516,8 @@ function draw() {
     ctx.stroke();
   }
 
-  // Draw candles
   candles.forEach((candle, i) => {
-    const x = i * (candleWidth + gap); // start from left
+    const x = i * (candleWidth + gap);
     const bull = candle.close > candle.open;
     const color = bull ? "rgba(120,200,255,0.95)" : "rgba(230,230,230,0.9)";
     ctx.strokeStyle = color;
@@ -347,27 +526,35 @@ function draw() {
     const bodyTop = Math.min(candle.open, candle.close);
     const bodyHeight = Math.max(Math.abs(candle.close - candle.open), 2);
 
-    // wick
     ctx.beginPath();
     ctx.moveTo(x + candleWidth / 2, candle.high);
     ctx.lineTo(x + candleWidth / 2, candle.low);
     ctx.stroke();
 
-    // body
     ctx.fillRect(x, bodyTop, candleWidth, bodyHeight);
   });
 }
 
-// Animation loop
 function animate() {
   tick++;
-  if (tick % 20 === 0) addCandle(); // control speed
+  if (tick % 20 === 0) addCandle();
   draw();
   requestAnimationFrame(animate);
 }
 
 addCandle();
 animate();
+
+/* ===== Modal Logic ===== */
+const modal = document.getElementById("accessModal");
+const openBtn = document.getElementById("openModal");
+const closeBtn = document.querySelector(".close");
+
+openBtn.addEventListener("click", () => modal.classList.add("active"));
+closeBtn.addEventListener("click", () => modal.classList.remove("active"));
+
+window.addEventListener("click", (e) => { if(e.target===modal) modal.classList.remove("active"); });
+window.addEventListener("keydown", (e) => { if(e.key==="Escape") modal.classList.remove("active"); });
 </script>
 </body>
 </html>
