@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>XSV Trading</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body{
+  font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+  background:#0b0b0b;
+  color:#e5e5e5;
+  line-height:1.6;
+  overflow-x:hidden;
+  text-align:center;
+}
+
+#chartCanvas{
+  position:fixed;
+  top:120px; /* start below header */
+  left:0;
+  width:100%;
+  height:calc(100vh - 120px); /* full viewport minus header initially */
+  z-index:-1;
+  opacity:0.2;
+}
+
+
+
+/* ===== Header ===== */
+header{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:40px 0;
+  position:fixed;
+  width:100%;
+  background:rgba(11,11,11,0.85);
+  backdrop-filter:blur(8px);
+  z-index:10;
+  height:120px;
+}
+
+/* ===== XSV Logo Metallic Glint Inside Text ===== */
+.logo{
+  font-size:60px;
+  font-weight:900;
+  letter-spacing:10px;
+  text-align:center;
+
+  /* Strong metallic gradient */
+  background: linear-gradient(
+    120deg,
+    #ffffff 0%,
+    #888888 15%,   /* darker streak */
+    #ffffff 30%,
+    #bbbbbb 50%,   /* medium gray */
+    #ffffff 70%,
+    #999999 85%,   /* another dark streak */
+    #ffffff 100%
+  );
+  background-size:300% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  /* Animate gradient across text */
+  animation: metallicGlint 1.5s linear infinite;
+
+  text-shadow: 0 0 12px rgba(255,255,255,0.6),
+               0 0 18px rgba(180,200,255,0.3),
+               0 0 24px rgba(120,200,255,0.2);
+}
+
+@keyframes metallicGlint{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* ===== Hero ===== */
+.hero{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  max-width:800px;
+  margin:0 auto;
+  padding:160px 20px 20px 20px;
+  box-sizing:border-box;
+}
+
+.hero h1{
+  font-size:60px;
+  font-weight:500;
+  letter-spacing:-1px;
+  word-break:break-word;
+}
+
+.hero p{
+  margin-top:30px;
+  font-size:18px;
+  color:#888;
+}
+
+/* ===== Request Access Button - Metallic ===== */
+.btn{
+  display:inline-block;
+  margin-top:40px;
+  padding:14px 36px;
+  border:none;
+  font-size:16px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  cursor:pointer;
+  text-decoration:none;
+  text-align:center;
+
+  /* Metallic gradient background */
+  background: linear-gradient(
+    120deg,
+    #ffffff 0%,
+    #888888 20%,
+    #ffffff 40%,
+    #bbbbbb 60%,
+    #ffffff 80%
+  );
+  background-size: 200% 200%;
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  font-weight:700;
+  border-radius:6px;
+  box-shadow:0 0 15px rgba(120,200,255,0.3);
+  transition:all 0.4s ease;
+  animation: btnGlint 2s linear infinite;
+}
+
+.btn:hover{
+  box-shadow:0 0 30px rgba(120,200,255,0.8);
+  transform:scale(1.05);
+}
+
+@keyframes btnGlint{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* ===== Features Section ===== */
+section#features{
+  padding:20px 20px 40px 20px;
+}
+.divider{
+  height:1px;
+  background:#282828;
+  margin:50px 0;
+}
+.features{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:50px;
+  max-width:800px;
+  margin:0 auto;
+  text-align:center;
+}
+.feature h3{ font-size:16px; margin-bottom:10px; }
+.feature p{ color:#777; font-size:15px; }
+
+/* ===== Testimonials ===== */
+.testimonials{
+  padding:60px 20px 40px 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+  max-width:900px;
+  margin:0 auto;
+  text-align:center;
+}
+.testimonial{
+  background:rgba(20,20,20,0.6);
+  border:1px solid rgba(255,255,255,0.05);
+  padding:25px;
+  backdrop-filter:blur(6px);
+  transition:0.4s;
+}
+.testimonial:hover{ border:1px solid rgba(120,200,255,0.4); }
+.testimonial h4{ font-size:14px; letter-spacing:1px; margin-bottom:6px; }
+.stars{ color:#87f981; font-size:14px; margin-bottom:10px; }
+.testimonial p{ font-size:14px; color:#aaa; }
+
+/* ===== Scroll Animation ===== */
+.fade-up{ opacity:0; transform:translateY(20px); transition:all 0.8s ease; }
+.fade-up.active{ opacity:1; transform:translateY(0); }
+
+footer{ padding:40px 8%; font-size:12px; color:#555; text-align:center; }
+
+@media(max-width:768px){
+  .hero h1{ font-size:42px; }
+  .logo{ font-size:42px; letter-spacing:6px; }
+}
+
+/* Optional smaller metallic shimmer for hero text */
+.hero h1{
+  background: linear-gradient(
+    120deg,
+    #ffffff 0%,
+    #bbbbbb 30%,
+    #ffffff 60%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: heroShimmer 3s linear infinite;
+}
+@keyframes heroShimmer{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+</style>
+</head>
+
+<body>
+<canvas id="chartCanvas"></canvas>
+
+<header>
+  <div class="logo">XSV</div>
+</header>
+
+<section class="hero fade-up">
+  <h1>Trade with xlusive.<br />Profit with ease.</h1>
+  <p>XSV is a futures trading group focused on structure, risk control, psychology, and consistency.</p>
+  <a href="https://buy.stripe.com/8x214oeWK2gq4mGb2HbV601" class="btn">Gain Access</a>
+</section>
+
+<section id="features">
+  <div class="divider"></div>
+  <div class="features">
+    <div class="feature fade-up">
+      <h3>Futures Focused</h3>
+      <p>Structured setups. Defined risk. Professional execution.</p>
+    </div>
+    <div class="feature fade-up">
+      <h3>Private Membership</h3>
+      <p>A curated group of dedicated traders. Sharing different looks and views on the markets</p>
+    </div>
+    <div class="feature fade-up">
+      <h3>Risk First</h3>
+      <p>Capital protection is the foundation to growth.</p>
+    </div>
+    <div class="feature fade-up">
+      <h3>Psychology Focused</h3>
+      <p>Mentallity is the key to consistency and success.</p>
+    </div>
+  </div>
+</section>
+  <div class="divider"></div>
+<section id="testimonials" class="testimonials">
+  <div class="testimonial fade-up">
+    <h4>James R.</h4>
+    <div class="stars">★★★★★</div>
+    <p>The structure and discipline inside XSV completely changed my view on trading.</p>
+  </div>
+  <div class="testimonial fade-up">
+    <h4>Louis B.</h4>
+    <div class="stars">★★★★★</div>
+    <p>Best futures community I’ve been a part of. Clean setups and best advice.</p>
+  </div>
+</section>
+
+<footer class="fade-up">© 2026 XSV Trading — xlusive.</footer>
+
+<script>
+/* Scroll Animation */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add("active");
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
+
+/* ===== Candlestick Background ===== */
+const canvas = document.getElementById("chartCanvas");
+const ctx = canvas.getContext("2d");
+const heroSection = document.querySelector('.hero');
+
+let candleWidth = 8;
+let gap = 6;
+let candles = [];
+let basePrice;
+let tick = 0;
+
+// Resize canvas to hero section only
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = heroSection.offsetHeight; // only behind hero
+  basePrice = canvas.height * 0.5; // start middle of hero section
+}
+resize();
+window.addEventListener("resize", resize);
+
+// Calculate max candles to always fill width
+function getMaxCandles() {
+  return Math.ceil(canvas.width / (candleWidth + gap)) + 10;
+}
+
+// Add a new candle
+function addCandle() {
+  const open = basePrice;
+  const change = (Math.random() - 0.48) * 50; // random movement
+  const close = open + change;
+  const high = Math.max(open, close) + Math.random() * 15;
+  const low = Math.min(open, close) - Math.random() * 15;
+  candles.push({ open, close, high, low });
+  basePrice = close;
+
+  // Keep only enough candles to fill width
+  const maxCandles = getMaxCandles();
+  if (candles.length > maxCandles) candles.shift();
+}
+
+// Draw grid and candles
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Optional subtle horizontal grid
+  ctx.strokeStyle = "rgba(255,255,255,0.04)";
+  ctx.lineWidth = 1;
+  for (let i = 0; i < canvas.height; i += 120) {
+    ctx.beginPath();
+    ctx.moveTo(0, i);
+    ctx.lineTo(canvas.width, i);
+    ctx.stroke();
+  }
+
+  // Draw candles
+  candles.forEach((candle, i) => {
+    const x = i * (candleWidth + gap); // start from left
+    const bull = candle.close > candle.open;
+    const color = bull ? "rgba(120,200,255,0.95)" : "rgba(230,230,230,0.9)";
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+
+    const bodyTop = Math.min(candle.open, candle.close);
+    const bodyHeight = Math.max(Math.abs(candle.close - candle.open), 2);
+
+    // wick
+    ctx.beginPath();
+    ctx.moveTo(x + candleWidth / 2, candle.high);
+    ctx.lineTo(x + candleWidth / 2, candle.low);
+    ctx.stroke();
+
+    // body
+    ctx.fillRect(x, bodyTop, candleWidth, bodyHeight);
+  });
+}
+
+// Animation loop
+function animate() {
+  tick++;
+  if (tick % 20 === 0) addCandle(); // control speed
+  draw();
+  requestAnimationFrame(animate);
+}
+
+addCandle();
+animate();
+</script>
+</body>
+</html>
