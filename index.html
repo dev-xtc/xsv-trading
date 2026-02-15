@@ -23,20 +23,25 @@ body{
 /* ===== Chart Canvas ===== */
 #chartCanvas{
   position:fixed;
-  top:120px;
+  top:100px; /* raised slightly */
   left:0;
   width:100%;
-  height:calc(100vh - 120px);
+  height:calc(100vh - 100px);
   z-index:-1;
   opacity:0.2;
 }
 
+/* ===== Background Blur Overlay ===== */
 #chartBlur {
-  background: rgba(11,11,11,0.2); /* subtle dark layer */
-  backdrop-filter: blur(20px);
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.4;
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100vh;
+  z-index:0;
+  backdrop-filter: blur(10px); /* more fuzzy effect */
+  pointer-events:none;
+  opacity:0.3;
 }
 
 /* ===== Logo ===== */
@@ -45,7 +50,6 @@ body{
   font-weight:900;
   letter-spacing:10px;
   text-align:center;
-
   background: linear-gradient(
     120deg,
     #ffffff 0%,
@@ -60,7 +64,6 @@ body{
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: metallicGlint 1.5s linear infinite;
-
   text-shadow: 0 0 12px rgba(255,255,255,0.6),
                0 0 18px rgba(180,200,255,0.3),
                0 0 24px rgba(120,200,255,0.2);
@@ -309,7 +312,6 @@ footer.visible {
 /* ===== Fade-in on Load ===== */
 window.addEventListener('load', () => {
   document.body.style.opacity = '1';
-
   const fadeElements = document.querySelectorAll('.fade-up');
   fadeElements.forEach(el => el.classList.add('visible'));
 });
@@ -317,16 +319,17 @@ window.addEventListener('load', () => {
 /* ===== Candlestick Chart ===== */
 const canvas = document.getElementById("chartCanvas");
 const ctx = canvas.getContext("2d");
+const heroSection = document.querySelector('.hero');
 
-let candleWidth = 8;
-let gap = 4;
+let candleWidth = 12; // bigger candles
+let gap = 6;
 let candles = [];
 let basePrice, xPos, trendDirection, trendCounter, trendLength;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight - 120; // full viewport minus top
-  basePrice = canvas.height * 0.45; // raise the chart a bit higher
+  canvas.height = heroSection.offsetHeight + 50; // raised a bit
+  basePrice = canvas.height * 0.4;
   xPos = 0;
   trendDirection = 1;
   trendCounter = 0;
@@ -340,7 +343,7 @@ window.addEventListener("resize", resizeCanvas);
 function addCandle() {
   if (xPos > canvas.width) return;
   const open = basePrice;
-  let change = trendDirection * (15 + Math.random() * 25); // bigger moves
+  let change = trendDirection * (20 + Math.random() * 30); // bigger moves
   let close = basePrice + change;
   close = Math.max(2, Math.min(canvas.height - 2, close));
   const high = Math.min(Math.max(open, close) + Math.random() * 15, canvas.height - 2);
@@ -353,7 +356,7 @@ function addCandle() {
   ctx.fillStyle = color;
 
   const bodyTop = Math.min(open, close);
-  const bodyHeight = Math.max(Math.abs(close - open) * 1.8, 2);
+  const bodyHeight = Math.max(Math.abs(close - open) * 1.5, 2);
 
   ctx.beginPath();
   ctx.moveTo(xPos + candleWidth / 2, high);
@@ -372,12 +375,16 @@ function addCandle() {
   }
 }
 
-function drawAllCandles() { 
-  if(xPos>canvas.width) return; 
-  addCandle(); 
-  setTimeout(drawAllCandles, 120); // stable speed
+let lastTime = 0;
+function drawAllCandles(time) {
+  if (!lastTime) lastTime = time;
+  if (time - lastTime > 120) { // ~120ms per candle
+    if (xPos <= canvas.width) addCandle();
+    lastTime = time;
+  }
+  requestAnimationFrame(drawAllCandles);
 }
-drawAllCandles();
+requestAnimationFrame(drawAllCandles);
 
 /* ===== Modal Button ===== */
 const openModalBtn = document.getElementById("openModal");
