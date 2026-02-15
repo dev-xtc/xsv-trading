@@ -6,7 +6,7 @@
 <title>XSV Trading</title>
 <link rel="icon" href="favicon.ico" type="image/ico">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
+* { margin:0; padding:0; box-sizing:border-box; overflow:hidden; }
 html { scroll-behavior:smooth; }
 
 body{
@@ -30,7 +30,6 @@ body{
   z-index:-1;
   opacity:0.2;
 }
-
 /* ===== Background Blur Overlay ===== */
 #chartBlur {
   position: fixed;
@@ -39,7 +38,7 @@ body{
   width:100%;
   height:100vh;
   z-index:0;
-  backdrop-filter: blur(10px); /* more fuzzy effect */
+  backdrop-filter: blur(4px); /* more fuzzy effect */
   pointer-events:none;
   opacity:0.3;
 }
@@ -328,8 +327,8 @@ let basePrice, xPos, trendDirection, trendCounter, trendLength;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
-  canvas.height = heroSection.offsetHeight + 50; // raised a bit
-  basePrice = canvas.height * 0.4;
+  canvas.height = window.innerHeight; // full viewport
+  basePrice = canvas.height * 0.45; // raise the chart vertically
   xPos = 0;
   trendDirection = 1;
   trendCounter = 0;
@@ -351,7 +350,7 @@ function addCandle() {
   candles.push({ open, close, high, low });
 
   const bull = close > open;
-  const color = bull ? "rgba(230,230,230,0.9)" : "rgba(120,200,255,0.95)";
+  const color = bull ? "rgba(230,230,230,1)" : "rgba(120,200,255,1)";
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
 
