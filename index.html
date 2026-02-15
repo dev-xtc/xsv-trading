@@ -16,8 +16,11 @@ body{
   line-height:1.6;
   overflow-x:hidden;
   text-align:center;
+  opacity:0;
+  transition: opacity 1.2s ease-out;
 }
 
+/* ===== Chart Canvas ===== */
 #chartCanvas{
   position:fixed;
   top:120px;
@@ -28,21 +31,20 @@ body{
   opacity:0.2;
 }
 
-/* ===== Header ===== */
-header{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:40px 0;
-  position:fixed;
+/* ===== Background Blur Overlay ===== */
+#chartBlur {
+  position: fixed;
+  top:120px;
+  left:0;
   width:100%;
-  background:rgba(11,11,11,0.85);
-  backdrop-filter:blur(8px);
-  z-index:10;
-  height:120px;
+  height:calc(100vh - 120px);
+  z-index:0;
+  backdrop-filter: blur(6px);
+  pointer-events:none;
+  opacity:0.25;
 }
 
-/* ===== XSV Logo Metallic Glint Inside Text ===== */
+/* ===== Logo ===== */
 .logo{
   font-size:60px;
   font-weight:900;
@@ -83,8 +85,16 @@ header{
   align-items:center;
   max-width:800px;
   margin:0 auto;
-  padding:160px 20px 20px 20px;
+  padding:20px;
   box-sizing:border-box;
+  opacity:0;
+  transform:translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.hero.visible {
+  opacity:1;
+  transform:translateY(0);
 }
 
 .hero h1{
@@ -116,7 +126,7 @@ header{
   color:#888;
 }
 
-/* ===== Request Access Button - Metallic (fixed hover) ===== */
+/* ===== Request Access Button ===== */
 .btn{
   display:inline-block;
   margin-top:40px;
@@ -148,20 +158,7 @@ header{
   animation: btnGlint 2s linear infinite;
 }
 
-/* Hover fix: keep metallic gradient, remove gray fill */
 .btn:hover{
-  background: linear-gradient(
-    120deg,
-    #ffffff 0%,
-    #888888 20%,
-    #ffffff 40%,
-    #bbbbbb 60%,
-    #ffffff 80%
-  );
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
   box-shadow:0 0 30px rgba(120,200,255,0.8);
   transform:scale(1.05);
 }
@@ -175,16 +172,25 @@ header{
 /* ===== Features Section ===== */
 section#features{
   padding:20px 20px 40px 20px;
+  opacity:0;
+  transform:translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
+
+section#features.visible {
+  opacity:1;
+  transform:translateY(0);
+}
+
 .divider{
   height:1px;
-  background:#282828;
-  margin:50px 0;
+  background:#28282800;
+  margin:20px 0;
 }
 .features{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:50px;
+  gap:20px;
   max-width:800px;
   margin:0 auto;
   text-align:center;
@@ -192,200 +198,53 @@ section#features{
 .feature h3{ font-size:16px; margin-bottom:10px; }
 .feature p{ color:#777; font-size:15px; }
 
-/* ===== Testimonials ===== */
-.testimonials{
-  padding:60px 20px 40px 20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:30px;
-  max-width:900px;
-  margin:0 auto;
+/* ===== Footer ===== */
+footer{
+  padding:20px 8%;
+  font-size:12px;
+  color:#555;
   text-align:center;
+  opacity:0;
+  transform:translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
-.testimonial{
-  background:rgba(20,20,20,0.6);
-  border:1px solid rgba(255,255,255,0.05);
-  padding:25px;
-  backdrop-filter:blur(6px);
-  transition:0.4s;
+
+footer.visible {
+  opacity:1;
+  transform:translateY(0);
 }
-.testimonial:hover{ border:1px solid rgba(120,200,255,0.4); transform: translateY(-6px);}
-.testimonial h4{ font-size:14px; letter-spacing:1px; margin-bottom:6px; }
-.stars{ color:#87f981; font-size:14px; margin-bottom:10px; }
-.testimonial p{ font-size:14px; color:#aaa; }
-
-/* ===== Scroll Animation ===== */
-.fade-up{ opacity:0; transform:translateY(20px); transition:all 0.8s ease; }
-.fade-up.active{ opacity:1; transform:translateY(0); }
-
-footer{ padding:40px 8%; font-size:12px; color:#555; text-align:center; }
 
 @media(max-width:768px){
   .hero h1{ font-size:42px; }
   .logo{ font-size:42px; letter-spacing:6px; }
 }
 
-/* ===== Sleek Access Modal with Glint Prices ===== */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh; /* full viewport height */
-  display: flex;
-  justify-content: center;
-  align-items: center; /* perfect vertical center */
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.8);
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  z-index: 100;
-}
-
-.modal.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.modal-content {
-  position: relative;
-  background: #111;
-  padding: 40px 30px;
-  width: 90%;
-  max-width: 620px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.08);
-  text-align: center;
-  transform: scale(0.95); /* small scale for pop animation */
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-}
-
-.modal.active .modal-content {
-  transform: scale(1); /* pop to normal */
-}
-
-.modal h2 {
-  margin-bottom: 30px;
-  font-weight: 500;
-  letter-spacing: 1px;
-}
-
-/* Plan Cards */
-.plans {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-@media(min-width: 600px){
-  .plans {
-    flex-direction: row;
-    justify-content: center;
-    gap: 20px;
-  }
-}
-
-.plan {
-  flex: 1;
-  padding: 28px 22px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.08);
-  text-decoration: none;
-  color: #e5e5e5;
-  transition: all 0.3s ease;
-  background: rgba(255,255,255,0.02);
-  backdrop-filter: blur(4px);
-  position: relative;
-}
-
-.plan h3 {
-  margin-bottom: 6px;
-  font-size: 20px;
-  letter-spacing: 1px;
-}
-
-.plan p {
-  font-size: 14px;
-  color: #aaa;
-  margin: 4px 0;
-}
-
-/* Price Glint */
-.price {
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: 1px;
-  background: linear-gradient(
-    120deg,
-    #ffffff 0%,
-    #bbbbbb 30%,
-    #ffffff 60%
-  );
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: priceGlint 3s linear infinite;
-  margin-bottom: 8px;
-}
-
-@keyframes priceGlint {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Gradient hover effect */
-.plan:hover {
-  border: none;
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(120,200,255,0.25);
-  background: linear-gradient(135deg, rgba(120,200,255,0.1), rgba(120,200,255,0.05));
-}
-
-/* Lifetime highlight */
-.lifetime {
-  background: rgba(120,200,255,0.05);
-  border: 1px solid rgba(120,200,255,0.25);
-}
-
-.badge {
-  display: inline-block;
-  font-size: 12px;
-  letter-spacing: 1px;
-  padding: 1px 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(120,200,255,0.4);
-  color: rgba(120,200,255,0.9);
-  font-weight: 600;
-  position: absolute;
-  top: 14px;
-  right: 14px;
-}
-
-.close {
-  position: absolute;
-  top: 18px;
-  right: 25px;
-  font-size: 22px;
-  cursor: pointer;
-  color: #777;
-  transition: color 0.2s ease;
-}
-
-.close:hover {
-  color: #fff;
-}
+/* ===== Modal Styles ===== */
+.modal { position: fixed; top:0; left:0; width:100%; height:100vh; display:flex; justify-content:center; align-items:center; opacity:0; background: rgba(0,0,0,0.8); pointer-events:none; transition:0.3s; z-index:100; }
+.modal.active { opacity:1; pointer-events:all; }
+.modal-content { position:relative; background:#111; padding:40px 30px; width:90%; max-width:620px; border-radius:16px; border:1px solid rgba(255,255,255,0.08); text-align:center; transform:scale(0.95); transition: transform 0.3s ease, opacity 0.3s ease; box-shadow:0 20px 40px rgba(0,0,0,0.5); }
+.modal.active .modal-content { transform:scale(1); }
+.modal h2 { margin-bottom:30px; font-weight:500; letter-spacing:1px; }
+.plans { display:flex; flex-direction:column; gap:10px; }
+@media(min-width:600px){ .plans { flex-direction:row; justify-content:center; gap:20px; } }
+.plan { flex:1; padding:28px 22px; border-radius:14px; border:1px solid rgba(255,255,255,0.08); text-decoration:none; color:#e5e5e5; transition:all 0.3s ease; background: rgba(255,255,255,0.02); backdrop-filter: blur(4px); position:relative; }
+.plan h3 { margin-bottom:6px; font-size:20px; letter-spacing:1px; }
+.plan p { font-size:14px; color:#aaa; margin:4px 0; }
+.price { font-weight:700; font-size:20px; letter-spacing:1px; background: linear-gradient(120deg,#ffffff 0%,#bbbbbb 30%,#ffffff 60%); background-size:200% 200%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation: priceGlint 3s linear infinite; margin-bottom:8px; }
+@keyframes priceGlint{ 0% {background-position:0% 50%;} 50% {background-position:100% 50%;} 100% {background-position:0% 50%;} }
+.plan:hover { border:none; transform:translateY(-5px); box-shadow:0 12px 30px rgba(120,200,255,0.25); background: linear-gradient(135deg, rgba(120,200,255,0.1), rgba(120,200,255,0.05)); }
+.lifetime { background: rgba(120,200,255,0.05); border:1px solid rgba(120,200,255,0.25); }
+.badge { display:inline-block; font-size:12px; letter-spacing:1px; padding:1px 10px; margin-bottom:10px; border-radius:8px; border:1px solid rgba(120,200,255,0.4); color:rgba(120,200,255,0.9); font-weight:600; position:absolute; top:14px; right:14px; }
+.close { position:absolute; top:18px; right:25px; font-size:22px; cursor:pointer; color:#777; transition:color 0.2s ease; }
+.close:hover { color:#fff; }
 </style>
 </head>
-
 <body>
-<canvas id="chartCanvas"></canvas>
 
-<header>
-  <div class="logo">XSV</div>
-</header>
+<canvas id="chartCanvas"></canvas>
+<div id="chartBlur"></div>
+
+<div class="logo">XSV</div>
 
 <section class="hero fade-up">
   <h1>Trade with xlusive.<br />Profit with ease.</h1>
@@ -393,8 +252,7 @@ footer{ padding:40px 8%; font-size:12px; color:#555; text-align:center; }
   <button class="btn" id="openModal">Gain Access</button>
 </section>
 
-<section id="features">
-  <div class="divider"></div>
+<section id="features" class="fade-up">
   <div class="features">
     <div class="feature fade-up">
       <h3>Futures Focused</h3>
@@ -414,42 +272,19 @@ footer{ padding:40px 8%; font-size:12px; color:#555; text-align:center; }
     </div>
   </div>
 </section>
-<div class="divider"></div>
-<section id="testimonials" class="testimonials">
-  <div class="testimonial fade-up">
-    <h4>James G.</h4>
-    <div class="stars">★★★★★</div>
-    <p>The skill and community inside XSV completely changed my view on trading.</p>
-  </div>
-  <div class="testimonial fade-up">
-    <h4>Louis B.</h4>
-    <div class="stars">★★★★★</div>
-    <p>Best futures community I’ve been a part of. Good tools and best advice.</p>
-  </div>
-  <div class="testimonial fade-up">
-    <h4>Nick C.</h4>
-    <div class="stars">★★★★★</div>
-    <p>was able to pass a funded and receieve my first ever payout less than 2 weeks in! money well spent!</p>
-  </div>
-</section>
 
 <footer class="fade-up">© 2026 XSV Trading — xlusive.</footer>
 
-<!-- ===== Access Modal ===== -->
 <div id="accessModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
     <h2>Select Your Access</h2>
-
     <div class="plans">
-      <!-- Monthly Plan -->
       <a href="https://buy.stripe.com/3cI4gA29Y3kucTc1s7bV603" class="plan">
         <h3>Monthly Access</h3>
         <p class="price">$99.99 / month</p>
         <p>Billed monthly. Cancel anytime. Full access to calls, bots, tools, and community.</p>
       </a>
-
-      <!-- Lifetime Plan -->
       <a href="https://buy.stripe.com/14A4gAdSGbR07yS6MrbV602" class="plan lifetime">
         <div class="badge">Best Value</div>
         <h3>Lifetime Access</h3>
@@ -461,100 +296,96 @@ footer{ padding:40px 8%; font-size:12px; color:#555; text-align:center; }
 </div>
 
 <script>
-/* Scroll Animation */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add("active");
-  });
-}, { threshold: 0.2 });
-document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
+/* ===== Fade-in on Load ===== */
+window.addEventListener('load', () => {
+  document.body.style.opacity = '1';
 
-/* ===== Candlestick Background ===== */
+  const fadeElements = document.querySelectorAll('.fade-up');
+  fadeElements.forEach(el => el.classList.add('visible'));
+});
+
+/* ===== Candlestick Chart ===== */
 const canvas = document.getElementById("chartCanvas");
 const ctx = canvas.getContext("2d");
 const heroSection = document.querySelector('.hero');
 
 let candleWidth = 8;
-let gap = 6;
+let gap = 4;
 let candles = [];
-let basePrice;
-let tick = 0;
+let basePrice, xPos, trendDirection, trendCounter, trendLength;
 
-function resize() {
+function resizeCanvas() {
   canvas.width = window.innerWidth;
-  canvas.height = heroSection.offsetHeight;
+  canvas.height = heroSection.offsetHeight - 80;
   basePrice = canvas.height * 0.5;
+  xPos = 0;
+  trendDirection = 1;
+  trendCounter = 0;
+  trendLength = 3 + Math.floor(Math.random() * 5);
+  candles = [];
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
-resize();
-window.addEventListener("resize", resize);
-
-function getMaxCandles() {
-  return Math.ceil(canvas.width / (candleWidth + gap)) + 10;
-}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
 function addCandle() {
+  if (xPos > canvas.width) return;
   const open = basePrice;
-  const change = (Math.random() - 0.48) * 50;
-  const close = open + change;
-  const high = Math.max(open, close) + Math.random() * 15;
-  const low = Math.min(open, close) - Math.random() * 15;
+  let change = trendDirection * (10 + Math.random() * 15);
+  let close = basePrice + change;
+  close = Math.max(2, Math.min(canvas.height - 2, close));
+  const high = Math.min(Math.max(open, close) + Math.random() * 10, canvas.height - 2);
+  const low = Math.max(Math.min(open, close) - Math.random() * 10, 2);
   candles.push({ open, close, high, low });
+
+  const bull = close > open;
+  const color = bull ? "rgba(230,230,230,0.9)" : "rgba(120,200,255,0.95)";
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+
+  const bodyTop = Math.min(open, close);
+  const bodyHeight = Math.max(Math.abs(close - open) * 1.5, 2);
+
+  ctx.beginPath();
+  ctx.moveTo(xPos + candleWidth / 2, high);
+  ctx.lineTo(xPos + candleWidth / 2, low);
+  ctx.stroke();
+  ctx.fillRect(xPos, bodyTop, candleWidth, bodyHeight);
+
   basePrice = close;
+  xPos += candleWidth + gap;
 
-  const maxCandles = getMaxCandles();
-  if (candles.length > maxCandles) candles.shift();
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "rgba(255,255,255,0.04)";
-  ctx.lineWidth = 1;
-  for (let i = 0; i < canvas.height; i += 120) {
-    ctx.beginPath();
-    ctx.moveTo(0, i);
-    ctx.lineTo(canvas.width, i);
-    ctx.stroke();
+  trendCounter++;
+  if (trendCounter >= trendLength) {
+    trendDirection *= -1;
+    trendCounter = 0;
+    trendLength = 3 + Math.floor(Math.random() * 5);
   }
+}
+function drawAllCandles() { if(xPos>canvas.width)return; addCandle(); setTimeout(drawAllCandles,120);}
+drawAllCandles();
 
-  candles.forEach((candle, i) => {
-    const x = i * (candleWidth + gap);
-    const bull = candle.close > candle.open;
-    const color = bull ? "rgba(120,200,255,0.95)" : "rgba(230,230,230,0.9)";
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
+/* ===== Modal Button ===== */
+const openModalBtn = document.getElementById("openModal");
+const modal = document.getElementById("accessModal");
+const closeModal = modal.querySelector(".close");
 
-    const bodyTop = Math.min(candle.open, candle.close);
-    const bodyHeight = Math.max(Math.abs(candle.close - candle.open), 2);
+openModalBtn.addEventListener("click", () => modal.classList.add("active"));
+closeModal.addEventListener("click", () => modal.classList.remove("active"));
+window.addEventListener("click", e => { if(e.target === modal) modal.classList.remove("active"); });
 
-    ctx.beginPath();
-    ctx.moveTo(x + candleWidth / 2, candle.high);
-    ctx.lineTo(x + candleWidth / 2, candle.low);
-    ctx.stroke();
-
-    ctx.fillRect(x, bodyTop, candleWidth, bodyHeight);
+/* ===== Scroll Fade ===== */
+const fadeElements = document.querySelectorAll('.fade-up');
+function fadeOnScroll() {
+  fadeElements.forEach(el => {
+    const top = el.getBoundingClientRect().top;
+    const windowHeight = window.innerHeight;
+    if(top < windowHeight - 100) el.classList.add('visible');
   });
 }
-
-function animate() {
-  tick++;
-  if (tick % 20 === 0) addCandle();
-  draw();
-  requestAnimationFrame(animate);
-}
-
-addCandle();
-animate();
-
-/* ===== Modal Logic ===== */
-const modal = document.getElementById("accessModal");
-const openBtn = document.getElementById("openModal");
-const closeBtn = document.querySelector(".close");
-
-openBtn.addEventListener("click", () => modal.classList.add("active"));
-closeBtn.addEventListener("click", () => modal.classList.remove("active"));
-
-window.addEventListener("click", (e) => { if(e.target===modal) modal.classList.remove("active"); });
-window.addEventListener("keydown", (e) => { if(e.key==="Escape") modal.classList.remove("active"); });
+window.addEventListener('scroll', fadeOnScroll);
+fadeOnScroll();
 </script>
+
 </body>
 </html>
