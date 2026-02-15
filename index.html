@@ -31,17 +31,12 @@ body{
   opacity:0.2;
 }
 
-/* ===== Background Blur Overlay ===== */
 #chartBlur {
-  position: fixed;
-  top:120px;
-  left:0;
-  width:100%;
-  height:calc(100vh - 120px);
-  z-index:0;
-  backdrop-filter: blur(6px);
-  pointer-events:none;
-  opacity:0.25;
+  background: rgba(11,11,11,0.2); /* subtle dark layer */
+  backdrop-filter: blur(20px);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.4;
 }
 
 /* ===== Logo ===== */
