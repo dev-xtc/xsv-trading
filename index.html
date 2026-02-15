@@ -105,8 +105,8 @@ body{
   background: linear-gradient(
     120deg,
     #ffffff 0%,
-    #bbbbbb 1%,
-    #cacaca 60%
+    #bbbbbb 0%,
+    #cacaca 0%
   );
   background-size: 200% 200%;
   -webkit-background-clip: text;
@@ -322,7 +322,6 @@ window.addEventListener('load', () => {
 /* ===== Candlestick Chart ===== */
 const canvas = document.getElementById("chartCanvas");
 const ctx = canvas.getContext("2d");
-const heroSection = document.querySelector('.hero');
 
 let candleWidth = 8;
 let gap = 4;
@@ -331,8 +330,8 @@ let basePrice, xPos, trendDirection, trendCounter, trendLength;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
-  canvas.height = heroSection.offsetHeight - 80;
-  basePrice = canvas.height * 0.5;
+  canvas.height = window.innerHeight - 120; // full viewport minus top
+  basePrice = canvas.height * 0.45; // raise the chart a bit higher
   xPos = 0;
   trendDirection = 1;
   trendCounter = 0;
@@ -346,11 +345,11 @@ window.addEventListener("resize", resizeCanvas);
 function addCandle() {
   if (xPos > canvas.width) return;
   const open = basePrice;
-  let change = trendDirection * (10 + Math.random() * 15);
+  let change = trendDirection * (15 + Math.random() * 25); // bigger moves
   let close = basePrice + change;
   close = Math.max(2, Math.min(canvas.height - 2, close));
-  const high = Math.min(Math.max(open, close) + Math.random() * 10, canvas.height - 2);
-  const low = Math.max(Math.min(open, close) - Math.random() * 10, 2);
+  const high = Math.min(Math.max(open, close) + Math.random() * 15, canvas.height - 2);
+  const low = Math.max(Math.min(open, close) - Math.random() * 15, 2);
   candles.push({ open, close, high, low });
 
   const bull = close > open;
@@ -359,7 +358,7 @@ function addCandle() {
   ctx.fillStyle = color;
 
   const bodyTop = Math.min(open, close);
-  const bodyHeight = Math.max(Math.abs(close - open) * 1.5, 2);
+  const bodyHeight = Math.max(Math.abs(close - open) * 1.8, 2);
 
   ctx.beginPath();
   ctx.moveTo(xPos + candleWidth / 2, high);
@@ -377,7 +376,12 @@ function addCandle() {
     trendLength = 3 + Math.floor(Math.random() * 5);
   }
 }
-function drawAllCandles() { if(xPos>canvas.width)return; addCandle(); setTimeout(drawAllCandles,120);}
+
+function drawAllCandles() { 
+  if(xPos>canvas.width) return; 
+  addCandle(); 
+  setTimeout(drawAllCandles, 120); // stable speed
+}
 drawAllCandles();
 
 /* ===== Modal Button ===== */
