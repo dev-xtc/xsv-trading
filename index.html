@@ -18,6 +18,18 @@ body{
   text-align:center;
   opacity:0;
   transition: opacity 1.2s ease-out;
+
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ===== NEW LAYOUT FIX ===== */
+.page-content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 }
 
 /* ===== Chart Canvas ===== */
@@ -204,6 +216,8 @@ footer{
   opacity:0;
   transform:translateY(30px);
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+  margin-top:auto;
 }
 
 footer.visible {
@@ -249,6 +263,8 @@ footer.visible {
 </head>
 <body>
 
+<div class="page-content">
+
 <canvas id="chartCanvas"></canvas>
 <div id="chartBlur"></div>
 
@@ -276,6 +292,8 @@ footer.visible {
     </div>
   </div>
 </section>
+
+</div>
 
 <footer class="fade-up">
   © 2026 XSV Trading — xlusive.
