@@ -355,26 +355,37 @@ window.addEventListener("resize", resizeCanvas);
 
 function addCandle() {
   if (xPos > canvas.width) return;
+
   const open = basePrice;
-  let change = trendDirection * (20 + Math.random() * 30); // bigger moves
+
+  // Bigger body movement
+  let change = trendDirection * (25 + Math.random() * 35);
   let close = basePrice + change;
   close = Math.max(2, Math.min(canvas.height - 2, close));
-  const high = Math.min(Math.max(open, close) + Math.random() * 15, canvas.height - 2);
-  const low = Math.max(Math.min(open, close) - Math.random() * 15, 2);
+
+  // Bigger + more dramatic wicks
+  const wickSize = 20 + Math.random() * 10; // <-- THIS is the key change
+  const high = Math.min(Math.max(open, close) + wickSize, canvas.height - 2);
+  const low = Math.max(Math.min(open, close) - wickSize, 2);
+
   candles.push({ open, close, high, low });
 
   const bull = close > open;
   const color = bull ? "rgba(230,230,230,1)" : "rgba(120,200,255,1)";
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
+  ctx.lineWidth = 2; // slightly thicker wick
 
   const bodyTop = Math.min(open, close);
-  const bodyHeight = Math.max(Math.abs(close - open) * 1.5, 2);
+  const bodyHeight = Math.max(Math.abs(close - open) * 1.4, 2);
 
+  // Draw wick
   ctx.beginPath();
   ctx.moveTo(xPos + candleWidth / 2, high);
   ctx.lineTo(xPos + candleWidth / 2, low);
   ctx.stroke();
+
+  // Draw body
   ctx.fillRect(xPos, bodyTop, candleWidth, bodyHeight);
 
   basePrice = close;
@@ -387,7 +398,6 @@ function addCandle() {
     trendLength = 3 + Math.floor(Math.random() * 5);
   }
 }
-
 let lastTime = 0;
 function drawAllCandles(time) {
   if (!lastTime) lastTime = time;
