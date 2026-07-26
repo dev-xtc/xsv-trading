@@ -45,7 +45,12 @@ body{
 .brand{display:flex; align-items:baseline; gap:12px;}
 .brand h1{
   font-size:26px; font-weight:800; letter-spacing:-0.02em;
+  cursor:text; outline:none; border-radius:6px; padding:2px 6px; margin:-2px -6px;
+  transition:background .15s;
+  max-width:420px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
+.brand h1:hover{background:var(--surface-2);}
+.brand h1:focus{background:var(--surface-2); box-shadow:0 0 0 1px var(--border); white-space:normal;}
 .brand .tick{
   font-family:var(--mono); font-size:12px; color:var(--amber);
   background:var(--amber-dim); padding:3px 8px; border-radius:3px;
@@ -290,7 +295,7 @@ body{
   <div class="header">
     <div>
       <div class="brand">
-        <h1>XLU$IVE</h1>
+        <h1 id="brandTitle" contenteditable="true" spellcheck="false" title="Click to rename">XLU$IVE</h1>
         <span class="tick">TRADE JOURNAL</span>
       </div>
       <div class="subtitle" id="loadStatus">Loading your trades…</div>
@@ -1021,6 +1026,48 @@ body{
     renderSwatches();
     $('themeOverlay').classList.remove('open');
   });
+
+  // ---------- Editable title ----------
+  const TITLE_KEY = 'ledger_title';
+  const MAX_TITLE_LEN = 32;
+
+  function loadTitle(){
+    try{
+      const t = localStorage.getItem(TITLE_KEY);
+      if(t) $('brandTitle').textContent = t;
+    }catch(e){}
+  }
+
+  function saveTitle(){
+    let text = $('brandTitle').textContent.replace(/\s+/g,' ').trim();
+    if(!text) text = 'XLU$IVE';
+    if(text.length > MAX_TITLE_LEN) text = text.slice(0, MAX_TITLE_LEN);
+    $('brandTitle').textContent = text;
+    try{ localStorage.setItem(TITLE_KEY, text); }catch(e){}
+  }
+
+  $('brandTitle').addEventListener('input', ()=>{
+    if($('brandTitle').textContent.length > MAX_TITLE_LEN){
+      $('brandTitle').textContent = $('brandTitle').textContent.slice(0, MAX_TITLE_LEN);
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.selectNodeContents($('brandTitle'));
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  });
+  $('brandTitle').addEventListener('keydown', (e)=>{
+    if(e.key==='Enter'){ e.preventDefault(); $('brandTitle').blur(); }
+  });
+  $('brandTitle').addEventListener('paste', (e)=>{
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    document.execCommand('insertText', false, text);
+  });
+  $('brandTitle').addEventListener('blur', saveTitle);
+
+  loadTitle();
 
   (function initTheme(){
     let saved = 'violet';
