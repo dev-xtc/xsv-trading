@@ -98,6 +98,50 @@ body{
 }
 .customize-pill:hover{color:var(--amber);}
 
+.day .news-dot{
+  position:absolute; top:6px; right:6px; width:6px; height:6px; border-radius:50%;
+}
+.day .news-dot.high{background:#FF5C6C;}
+.day .news-dot.medium{background:#F59E0B;}
+.day .news-dot.low{background:#35D07F;}
+
+.news-events{display:flex; flex-direction:column; gap:6px; margin-bottom:14px;}
+.news-event-row{
+  display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--border-soft);
+  border-radius:8px; padding:8px 12px; font-size:12px;
+}
+.news-event-row .dot{width:7px; height:7px; border-radius:50%; flex-shrink:0;}
+.news-event-row .dot.high{background:#FF5C6C;}
+.news-event-row .dot.medium{background:#F59E0B;}
+.news-event-row .dot.low{background:#35D07F;}
+.news-event-row .name{font-weight:600; color:var(--text);}
+.news-event-row .event-time{
+  font-family:var(--mono); font-size:11px; color:var(--text-muted); flex-shrink:0;
+}
+.news-event-row .impact-tag{
+  margin-left:auto; font-family:var(--mono); font-size:9px; text-transform:uppercase; letter-spacing:0.05em;
+  color:var(--text-dim);
+}
+.news-section{
+  background:var(--surface-2); border:1px solid var(--border-soft); border-radius:10px;
+  padding:12px; margin:14px 0;
+}
+.news-section-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+.add-news-link{
+  background:none; border:none; color:var(--amber); font-family:var(--sans); font-weight:600;
+  font-size:12px; cursor:pointer;
+}
+.add-news-link:hover{opacity:0.8;}
+.news-empty{color:var(--text-dim); font-size:11px; font-family:var(--mono); padding:6px 0;}
+.news-event-row .del-x{margin-left:8px;}
+.news-form{display:none; margin-top:10px; padding-top:10px; border-top:1px solid var(--border);}
+.news-form.open{display:block;}
+.news-form select{
+  background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:6px;
+  padding:8px 10px; font-family:var(--mono); font-size:13px; outline:none; width:100%;
+}
+.news-form select:focus{border-color:var(--amber);}
+
 /* Layout */
 .layout{display:grid; grid-template-columns:1fr 320px; gap:20px; align-items:start;}
 @media (max-width:900px){ .layout{grid-template-columns:1fr;} }
@@ -337,7 +381,7 @@ body{
           <div class="stat-box"><div class="lbl">Trades</div><div class="val" id="statCount">0</div></div>
           <div class="stat-box"><div class="lbl">Avg Planned RR</div><div class="val" id="statAvgRR">—</div></div>
           <div class="stat-box"><div class="lbl">Avg R (actual)</div><div class="val" id="statAvgR">—</div></div>
-          <div class="stat-box"><div class="lbl">Profit Factor</div><div class="val" id="statPF">—</div></div>
+          <div class="stat-box"><div class="lbl">Consistency</div><div class="val" id="statConsistency">—</div></div>
           <div class="stat-box"><div class="lbl">Avg Win / Loss</div><div class="val" id="statAvgWL" style="font-size:13px;">—</div></div>
           <div class="stat-box"><div class="lbl">Best Trade</div><div class="val pos" id="statBest">—</div></div>
           <div class="stat-box"><div class="lbl">Worst Trade</div><div class="val neg" id="statWorst">—</div></div>
@@ -382,6 +426,38 @@ body{
     <div class="day-pnl-strip">
       <span>Net P&amp;L for this day</span>
       <b id="dayPnlVal">$0.00</b>
+    </div>
+
+    <div class="news-section" id="newsSection">
+      <div class="news-section-head">
+        <span class="theme-label">NEWS EVENTS</span>
+        <button type="button" class="add-news-link" id="addNewsBtn">+ Add</button>
+      </div>
+      <div class="news-events" id="newsEventsList"></div>
+      <form class="news-form" id="newsForm">
+        <div class="form-row three">
+          <div class="field">
+            <label>Event Name</label>
+            <input type="text" id="ne_title" placeholder="e.g. CPI Release, FOMC, NFP" required>
+          </div>
+          <div class="field">
+            <label>Time (optional)</label>
+            <input type="time" id="ne_time">
+          </div>
+          <div class="field">
+            <label>Impact</label>
+            <select id="ne_impact">
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-save">Save Event</button>
+          <button type="button" class="btn-cancel" id="cancelNewsBtn">Cancel</button>
+        </div>
+      </form>
     </div>
 
     <div class="trade-list" id="tradeList"></div>
@@ -671,9 +747,44 @@ body{
         bar.style.width = w+'%';
         cell.appendChild(bar);
       }
+      const dayEvents = getEventsForDate(ds);
+      if(dayEvents.length){
+        const dot = document.createElement('div');
+        const worstImpact = dayEvents.some(e=>e.impact==='high') ? 'high'
+          : dayEvents.some(e=>e.impact==='medium') ? 'medium' : 'low';
+        dot.className = 'news-dot ' + worstImpact;
+        dot.title = dayEvents.map(e=> e.time ? `${formatTime12h(e.time)} ${e.title}` : e.title).join(', ');
+        cell.appendChild(dot);
+      }
       cell.addEventListener('click', ()=>openDay(ds));
       grid.appendChild(cell);
     }
+  }
+
+  // ---------- News events ----------
+  const NEWS_EVENTS = [
+    // No pre-loaded events — add your own from the day modal, or list them here manually:
+    // {date:'YYYY-MM-DD', title:'Event name', impact:'high'|'medium'}
+  ];
+  const CUSTOM_NEWS_KEY = 'ledger_custom_news';
+  let customNewsEvents = [];
+
+  function loadCustomNews(){
+    try{
+      const raw = localStorage.getItem(CUSTOM_NEWS_KEY);
+      customNewsEvents = raw ? JSON.parse(raw) : [];
+    }catch(e){
+      customNewsEvents = [];
+    }
+  }
+  function saveCustomNews(){
+    try{ localStorage.setItem(CUSTOM_NEWS_KEY, JSON.stringify(customNewsEvents)); }catch(e){}
+  }
+
+  function getEventsForDate(ds){
+    const refs = NEWS_EVENTS.filter(e=>e.date===ds).map(e=>({...e, custom:false}));
+    const own = customNewsEvents.filter(e=>e.date===ds).map(e=>({...e, custom:true}));
+    return [...refs, ...own];
   }
 
   // ---------- Stats ----------
@@ -702,7 +813,27 @@ body{
       if(worst===null || p<worst) worst=p;
     });
 
-    return {n, winRate, netPnl, pf, avgWin, avgLoss, avgPlannedRR, avgActualR, best, worst};
+    const consistency = computeConsistency(list);
+
+    return {n, winRate, netPnl, pf, avgWin, avgLoss, avgPlannedRR, avgActualR, best, worst, consistency};
+  }
+
+  // Consistency %: how evenly your profit is spread across days, prop-firm style.
+  // 100% = no single day's profit dominates your total. Falls as one day's profit
+  // makes up a larger share of your overall gains (or if you're net unprofitable).
+  function computeConsistency(list){
+    if(!list.length) return null;
+    const byDay = {};
+    list.forEach(t=>{
+      byDay[t.date] = (byDay[t.date]||0) + Number(t.pnl);
+    });
+    const dayTotals = Object.values(byDay);
+    const totalPnl = dayTotals.reduce((a,b)=>a+b,0);
+    if(totalPnl <= 0) return 0;
+    const bestDay = Math.max(...dayTotals);
+    if(bestDay <= 0) return 0;
+    const pct = 100 - (bestDay/totalPnl*100);
+    return Math.max(0, Math.min(100, pct));
   }
 
   function plannedRR(t){
@@ -737,7 +868,7 @@ body{
     $('statCount').textContent = s.n;
     $('statAvgRR').textContent = s.avgPlannedRR===null ? '—' : s.avgPlannedRR.toFixed(2)+'R';
     $('statAvgR').textContent = s.avgActualR===null ? '—' : (s.avgActualR>=0?'+':'')+s.avgActualR.toFixed(2)+'R';
-    $('statPF').textContent = s.pf===null ? '—' : (s.pf===Infinity? '∞' : s.pf.toFixed(2));
+    $('statConsistency').textContent = s.consistency===null ? '—' : s.consistency.toFixed(1)+'%';
     $('statAvgWL').textContent = (s.avgWin===null?'—':fmt$(s.avgWin)) + ' / ' + (s.avgLoss===null?'—':fmt$(-s.avgLoss));
     $('statBest').textContent = s.best===null ? '—' : fmt$(s.best);
     $('statWorst').textContent = s.worst===null ? '—' : fmt$(s.worst);
@@ -754,13 +885,88 @@ body{
     const d = new Date(ds+'T00:00:00');
     $('modalDate').textContent = d.toLocaleDateString('default',{weekday:'long', month:'long', day:'numeric', year:'numeric'});
     renderTradeList();
+    renderNewsEvents();
     closeForm();
+    closeNewsForm();
     $('overlay').classList.add('open');
   }
   function closeDay(){
     $('overlay').classList.remove('open');
     selectedDateStr = null;
   }
+
+  function formatTime12h(t){
+    if(!t) return '';
+    const [h, m] = t.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${String(m).padStart(2,'0')} ${period}`;
+  }
+
+  function renderNewsEvents(){
+    const list = getEventsForDate(selectedDateStr).slice().sort((a,b)=>{
+      if(!a.time && !b.time) return 0;
+      if(!a.time) return 1;
+      if(!b.time) return -1;
+      return a.time.localeCompare(b.time);
+    });
+    const wrap = $('newsEventsList');
+    if(!list.length){
+      wrap.innerHTML = '<div class="news-empty">No news events logged for this day.</div>';
+      return;
+    }
+    wrap.innerHTML = '';
+    list.forEach(e=>{
+      const row = document.createElement('div');
+      row.className = 'news-event-row';
+      row.innerHTML = `
+        <span class="dot ${e.impact}"></span>
+        ${e.time ? `<span class="event-time">${formatTime12h(e.time)}</span>` : ''}
+        <span class="name">${escapeHtml(e.title)}</span>
+        <span class="impact-tag">${e.impact}</span>
+        ${e.custom ? `<button type="button" class="del-x" data-id="${e.id}">✕</button>` : ''}
+      `;
+      if(e.custom){
+        row.querySelector('.del-x').addEventListener('click', ()=>{
+          if(confirm('Remove this news event?')){
+            customNewsEvents = customNewsEvents.filter(x=>x.id!==e.id);
+            saveCustomNews();
+            renderNewsEvents();
+            renderCalendar();
+          }
+        });
+      }
+      wrap.appendChild(row);
+    });
+  }
+
+  function openNewsForm(){
+    $('newsForm').classList.add('open');
+    $('ne_title').focus();
+  }
+  function closeNewsForm(){
+    $('newsForm').classList.remove('open');
+    $('newsForm').reset();
+  }
+
+  $('addNewsBtn').addEventListener('click', openNewsForm);
+  $('cancelNewsBtn').addEventListener('click', closeNewsForm);
+  $('newsForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const title = $('ne_title').value.trim();
+    const impact = $('ne_impact').value;
+    const time = $('ne_time').value; // 'HH:MM' 24-hour, or '' if not set
+    if(!title) return;
+    customNewsEvents.push({
+      id: 'n_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+      date: selectedDateStr,
+      title, impact, time
+    });
+    saveCustomNews();
+    closeNewsForm();
+    renderNewsEvents();
+    renderCalendar();
+  });
 
   function renderTradeList(){
     const list = trades.filter(t=>t.date===selectedDateStr);
@@ -1078,6 +1284,8 @@ body{
     applyTheme(saved, {save:false});
     renderSwatches();
   })();
+
+  loadCustomNews();
 
   loadTrades();
 })();
