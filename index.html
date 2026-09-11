@@ -24,24 +24,28 @@ body{
   flex-direction:column;
 }
 
-/* ===== NEW LAYOUT FIX ===== */
+/* ===== Page layout ===== */
 .page-content{
   flex:1;
   display:flex;
   flex-direction:column;
+  align-items:center;
   justify-content:center;
+  position:relative;
+  padding:40px 20px;
 }
 
 /* ===== Chart Canvas ===== */
 #chartCanvas{
   position:fixed;
-  top:100px; /* raised slightly */
+  top:100px;
   left:0;
   width:100%;
   height:calc(100vh - 100px);
   z-index:-1;
   opacity:0.2;
 }
+
 /* ===== Background Blur Overlay ===== */
 #chartBlur {
   position: fixed;
@@ -50,7 +54,7 @@ body{
   width:100%;
   height:100vh;
   z-index:0;
-  backdrop-filter: blur(4px); /* more fuzzy effect */
+  backdrop-filter: blur(4px);
   pointer-events:none;
   opacity:0.3;
 }
@@ -78,6 +82,7 @@ body{
   text-shadow: 0 0 12px rgba(255,255,255,0.6),
                0 0 18px rgba(180,200,255,0.3),
                0 0 24px rgba(120,200,255,0.2);
+  margin-bottom:50px;
 }
 
 @keyframes metallicGlint{
@@ -94,7 +99,7 @@ body{
   align-items:center;
   max-width:800px;
   margin:0 auto;
-  padding:20px;
+  padding:0 20px;
   box-sizing:border-box;
   opacity:0;
   transform:translateY(30px);
@@ -107,117 +112,35 @@ body{
 }
 
 .hero h1{
-  font-size:60px;
+  font-size:48px;
   font-weight:500;
-  letter-spacing:-1px;
+  letter-spacing:-0.5px;
   word-break:break-word;
-  background: linear-gradient(
-    120deg,
-    #ffffff 0%,
-    #bbbbbb 0%,
-    #cacaca 0%
-  );
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: heroShimmer 3s linear infinite;
-}
-
-@keyframes heroShimmer{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
+  color:#f0f0f0;
 }
 
 .hero p{
-  margin-top:30px;
-  font-size:18px;
+  margin-top:24px;
+  font-size:17px;
   color:#888;
+  max-width:520px;
 }
 
-/* ===== Request Access Button ===== */
-.btn{
-  display:inline-block;
-  margin-top:40px;
-  padding:14px 36px;
-  border:none;
-  font-size:16px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  cursor:pointer;
-  text-align:center;
-
-  background: linear-gradient(
-    120deg,
-    #ffffff 0%,
-    #888888 20%,
-    #ffffff 40%,
-    #bbbbbb 60%,
-    #ffffff 80%
-  );
-  background-size: 200% 200%;
-  color: transparent;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  font-weight:700;
-  border-radius:6px;
-  box-shadow:0 0 15px rgba(120,200,255,0.3);
-  transition: all 0.4s ease;
-  animation: btnGlint 2s linear infinite;
+@media(max-width:768px){
+  .hero h1{ font-size:34px; }
+  .logo{ font-size:42px; letter-spacing:6px; margin-bottom:36px; }
+  .hero p{ font-size:15px; }
 }
-
-.btn:hover{
-  box-shadow:0 0 30px rgba(120,200,255,0.8);
-  transform:scale(1.05);
-}
-
-@keyframes btnGlint{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
-
-/* ===== Features Section ===== */
-section#features{
-  padding:20px 20px 40px 20px;
-  opacity:0;
-  transform:translateY(30px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-section#features.visible {
-  opacity:1;
-  transform:translateY(0);
-}
-
-.divider{
-  height:1px;
-  background:#28282800;
-  margin:20px 0;
-}
-.features{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
-  max-width:800px;
-  margin:0 auto;
-  text-align:center;
-}
-.feature h3{ font-size:16px; margin-bottom:10px; }
-.feature p{ color:#777; font-size:15px; }
 
 /* ===== Footer ===== */
 footer{
-  padding:20px 8%;
+  padding:24px 8%;
   font-size:12px;
   color:#555;
   text-align:center;
   opacity:0;
   transform:translateY(30px);
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-
-  margin-top:auto;
 }
 
 footer.visible {
@@ -235,63 +158,21 @@ footer.visible {
 .tos-link:hover{
   color:#e5e5e5;
 }
-
-@media(max-width:768px){
-  .hero h1{ font-size:42px; }
-  .logo{ font-size:42px; letter-spacing:6px; }
-}
-
-/* ===== Modal Styles ===== */
-.modal { position: fixed; top:0; left:0; width:100%; height:100vh; display:flex; justify-content:center; align-items:center; opacity:0; background: rgba(0,0,0,0.8); pointer-events:none; transition:0.3s; z-index:100; }
-.modal.active { opacity:1; pointer-events:all; }
-.modal-content { position:relative; background:#111; padding:40px 30px; width:90%; max-width:620px; border-radius:16px; border:1px solid rgba(255,255,255,0.08); text-align:center; transform:scale(0.95); transition: transform 0.3s ease, opacity 0.3s ease; box-shadow:0 20px 40px rgba(0,0,0,0.5); }
-.modal.active .modal-content { transform:scale(1); }
-.modal h2 { margin-bottom:30px; font-weight:500; letter-spacing:1px; }
-.plans { display:flex; flex-direction:column; gap:10px; }
-@media(min-width:600px){ .plans { flex-direction:row; justify-content:center; gap:20px; } }
-.plan { flex:1; padding:28px 22px; border-radius:14px; border:1px solid rgba(255,255,255,0.08); text-decoration:none; color:#e5e5e5; transition:all 0.3s ease; background: rgba(255,255,255,0.02); backdrop-filter: blur(4px); position:relative; }
-.plan h3 { margin-bottom:6px; font-size:20px; letter-spacing:1px; }
-.plan p { font-size:14px; color:#aaa; margin:4px 0; }
-.price { font-weight:700; font-size:20px; letter-spacing:1px; background: linear-gradient(120deg,#ffffff 0%,#bbbbbb 30%,#ffffff 60%); background-size:200% 200%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation: priceGlint 3s linear infinite; margin-bottom:8px; }
-@keyframes priceGlint{ 0% {background-position:0% 50%;} 50% {background-position:100% 50%;} 100% {background-position:0% 50%;} }
-.plan:hover { border:none; transform:translateY(-5px); box-shadow:0 12px 30px rgba(120,200,255,0.25); background: linear-gradient(135deg, rgba(120,200,255,0.1), rgba(120,200,255,0.05)); }
-.lifetime { background: rgba(120,200,255,0.05); border:1px solid rgba(120,200,255,0.25); }
-.badge { display:inline-block; font-size:12px; letter-spacing:1px; padding:1px 10px; margin-bottom:10px; border-radius:8px; border:1px solid rgba(120,200,255,0.4); color:rgba(120,200,255,0.9); font-weight:600; position:absolute; top:14px; right:14px; }
-.close { position:absolute; top:18px; right:25px; font-size:22px; cursor:pointer; color:#777; transition:color 0.2s ease; }
-.close:hover { color:#fff; }
 </style>
 </head>
 <body>
 
 <div class="page-content">
 
-<canvas id="chartCanvas"></canvas>
-<div id="chartBlur"></div>
+  <canvas id="chartCanvas"></canvas>
+  <div id="chartBlur"></div>
 
-<div class="logo">XSV</div>
+  <div class="logo">XSV TRADING</div>
 
-<section class="hero fade-up">
-  <h1>Trade with xlusive.<br />Profit with ease.</h1>
-  <p>A futures trading group focused on structure, risk control, psychology, and consistency. Dedicated to pushing you to profits.</p>
-  <button class="btn" id="openModal">Gain Access</button>
-</section>
-
-<section id="features" class="fade-up">
-  <div class="features">
-    <div class="feature fade-up">
-      <h3>Futures Focused</h3>
-      <p> Setups. Defined risk. Precise execution. Infinite growth.</p>
-    </div>
-    <div class="feature fade-up">
-      <h3>Private Membership</h3>
-      <p>A private group of dedicated traders chasing the charts.</p>
-    </div>
-    <div class="feature fade-up">
-      <h3>Psychology Focused</h3>
-      <p>Mentality is the key to consistency and success.</p>
-    </div>
-  </div>
-</section>
+  <section class="hero fade-up">
+    <h1>WEBSITE UNDER MAINTENANCE</h1>
+    <p>We're making a few improvements behind the scenes. XSV Trading will be back - thanks for your patience.</p>
+  </section>
 
 </div>
 
@@ -303,48 +184,29 @@ footer.visible {
   <a href="https://xsv.trading/tos" class="tos-link">Terms of Service</a>
 </footer>
 
-<div id="accessModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>CURRENTLY CLOSED!!!</h2>
-<!-- <div class="plans">
-      <a href="https://buy.stripe.com/14A4gAdSGbR07yS6MrbV602" class="plan lifetime">
-        <div class="badge">50% Sale.</div>
-        <h3>Lifetime Access</h3>
-        <p class="price">$499 one-time</p>
-        <p>Full access forever plus exclusive tools, VIP perks, and live trading sessions.</p>
-      </a> -->
-    </div>
-  </div>
-</div>
-
 <script>
 /* ===== Fade-in on Load ===== */
 window.addEventListener('load', () => {
   document.body.style.opacity = '1';
-  const fadeElements = document.querySelectorAll('.fade-up');
-  fadeElements.forEach(el => el.classList.add('visible'));
+  document.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible'));
 });
 
-/* ===== Candlestick Chart ===== */
+/* ===== Candlestick Chart Background ===== */
 const canvas = document.getElementById("chartCanvas");
 const ctx = canvas.getContext("2d");
-const heroSection = document.querySelector('.hero');
 
-let candleWidth = 12; // bigger candles
+let candleWidth = 12;
 let gap = 6;
-let candles = [];
 let basePrice, xPos, trendDirection, trendCounter, trendLength;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight; // full viewport
-  basePrice = canvas.height * 0.45; // raise the chart vertically
+  canvas.height = window.innerHeight;
+  basePrice = canvas.height * 0.45;
   xPos = 0;
   trendDirection = 1;
   trendCounter = 0;
   trendLength = 3 + Math.floor(Math.random() * 5);
-  candles = [];
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 resizeCanvas();
@@ -354,35 +216,28 @@ function addCandle() {
   if (xPos > canvas.width) return;
 
   const open = basePrice;
-
-  // Bigger body movement
   let change = trendDirection * (25 + Math.random() * 35);
   let close = basePrice + change;
   close = Math.max(2, Math.min(canvas.height - 2, close));
 
-  // Bigger + more dramatic wicks
-  const wickSize = 20 + Math.random() * 10; // <-- THIS is the key change
+  const wickSize = 20 + Math.random() * 10;
   const high = Math.min(Math.max(open, close) + wickSize, canvas.height - 2);
   const low = Math.max(Math.min(open, close) - wickSize, 2);
-
-  candles.push({ open, close, high, low });
 
   const bull = close > open;
   const color = bull ? "rgba(230,230,230,1)" : "rgba(120,200,255,1)";
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
-  ctx.lineWidth = 2; // slightly thicker wick
+  ctx.lineWidth = 2;
 
   const bodyTop = Math.min(open, close);
   const bodyHeight = Math.max(Math.abs(close - open) * 1.4, 2);
 
-  // Draw wick
   ctx.beginPath();
   ctx.moveTo(xPos + candleWidth / 2, high);
   ctx.lineTo(xPos + candleWidth / 2, low);
   ctx.stroke();
 
-  // Draw body
   ctx.fillRect(xPos, bodyTop, candleWidth, bodyHeight);
 
   basePrice = close;
@@ -395,37 +250,17 @@ function addCandle() {
     trendLength = 3 + Math.floor(Math.random() * 5);
   }
 }
+
 let lastTime = 0;
 function drawAllCandles(time) {
   if (!lastTime) lastTime = time;
-  if (time - lastTime > 120) { // ~120ms per candle
+  if (time - lastTime > 120) {
     if (xPos <= canvas.width) addCandle();
     lastTime = time;
   }
   requestAnimationFrame(drawAllCandles);
 }
 requestAnimationFrame(drawAllCandles);
-
-/* ===== Modal Button ===== */
-const openModalBtn = document.getElementById("openModal");
-const modal = document.getElementById("accessModal");
-const closeModal = modal.querySelector(".close");
-
-openModalBtn.addEventListener("click", () => modal.classList.add("active"));
-closeModal.addEventListener("click", () => modal.classList.remove("active"));
-window.addEventListener("click", e => { if(e.target === modal) modal.classList.remove("active"); });
-
-/* ===== Scroll Fade ===== */
-const fadeElements = document.querySelectorAll('.fade-up');
-function fadeOnScroll() {
-  fadeElements.forEach(el => {
-    const top = el.getBoundingClientRect().top;
-    const windowHeight = window.innerHeight;
-    if(top < windowHeight - 100) el.classList.add('visible');
-  });
-}
-window.addEventListener('scroll', fadeOnScroll);
-fadeOnScroll();
 </script>
 
 </body>
